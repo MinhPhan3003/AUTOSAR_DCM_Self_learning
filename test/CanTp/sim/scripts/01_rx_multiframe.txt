@@ -1,0 +1,9 @@
+# Tester sends a 27-byte WriteDataByIdentifier request (2E F1 90 + 24 bytes):
+# FF carries 6 bytes, then 3 CFs carry 7 + 7 + 7 bytes.
+# ECU config: BS=2, STmin=5 ms -> the ECU asks for a new FC after every 2 CFs.
+ff 2E F1 90 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 11 12 13 14 15 16 17 18
+tick          # CanTp_MainFunction sends FC(CTS, BS=2, STmin=5)
+cf n=2        # CF SN=1 and SN=2 -> end of block
+tick          # ECU sends the next FC(CTS)
+cf            # CF SN=3 = last CF -> PduR_CanTpRxIndication(E_OK)
+rxdata

@@ -1,0 +1,9 @@
+# ECU sends a 30-byte response. You play the tester and answer with FC.
+send len=30
+tick          # FF goes out (FF_DL=30)
+fc bs=2 st=3  # tester: CTS, 2 CFs per block, 3 ms between CFs
+tick 10       # CF SN=1, wait STmin, CF SN=2, then the ECU waits for an FC
+fc fs=wait    # tester: wait (N_Bs restarts)
+tick 5
+fc            # tester: CTS, BS=0 (no more FC), STmin=0
+tick 3        # remaining CFs -> PduR_CanTpTxConfirmation(E_OK)

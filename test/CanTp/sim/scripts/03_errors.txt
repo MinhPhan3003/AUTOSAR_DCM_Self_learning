@@ -1,0 +1,29 @@
+# 1) SF without padding while CanTpRxPaddingActivation = CANTP_ON
+sf 3E 00 pad=off
+# 2) SF_DL = 9 does not fit in a classic CAN SF: the N-PDU is ignored (no reaction)
+sf 3E 00 dl=9
+# 3) wrong sequence number
+ff len=27
+tick
+cf sn=3
+# 4) upper layer buffer too small -> FC(WAIT) after N_Br, then FC(CTS)
+buf 8
+ff len=27
+tick 21       # N_Br expires -> FC(WAIT)
+buf 100
+tick 2        # buffer free -> FC(CTS)
+cf n=2
+tick
+cf
+# 5) N_Cr timeout: FF, FC, then no CF
+ff len=27
+tick 151
+# 6) upper layer refuses with BUFREQ_E_OVFL -> FC(OVFLW)
+sor ovfl
+ff len=27
+tick
+sor ok
+# 7) ECU transmission, tester answers FC(OVFLW)
+send len=20
+tick
+fc fs=ovflw
