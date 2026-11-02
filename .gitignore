@@ -1,1 +1,5 @@
 out/
+
+# Spec / datasheet PDFs are copyrighted: keep them local only
+docs/specs/
+*.pdf
